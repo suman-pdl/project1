@@ -35,16 +35,22 @@ if ($stmt) {
                     <th>Title</th>
                     <th>Web Email</th>
                     <th>Password</th>
+                    <th class="edit-delete">Edit</th>
+                        <th class="edit-delete">Delete</th>
                 </tr>';
 
         // Loop through each row
         while ($row = mysqli_fetch_assoc($result)) {
             // Display row data in table rows
             echo '<tr>';
-            echo '<td>' . htmlspecialchars($row['title']) . '</td>';
-            echo '<td>' . htmlspecialchars($row['webemail']) . '</td>';
-            echo '<td>' . htmlspecialchars($row['passwd']) . '</td>';
-            echo '</tr>';
+            echo '<td>' .$row['title'] . '</td>';
+            echo '<td>' .$row['webemail'] . '</td>';
+            $encryptionKey = "qwertyuiop123456";
+$passwd = openssl_decrypt($row["passwd"], "aes-256-cbc", $encryptionKey, 0, $encryptionKey);
+echo "<td>" . $passwd. "</td>";
+echo "<td class='edit-delete'><a href='editpassword.php?id=" . $row["id"] . "'>Edit</a></td>";
+        echo "<td class='edit-delete'><a href='deletepassword.php?id=" . $row["id"] . "'>Delete</a></td>";
+        echo "</tr>";
         }
 
         // Close table
