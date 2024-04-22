@@ -9,6 +9,7 @@
 <body>
 <form action="passhandeler.php" method="post">
    TITLE: <input type="text" name= "title"  placeholder="enter title">
+  website : <input type="text" name= "website"  placeholder="enter website">
   webemail : <input type="text" name= "webemail"  placeholder="enter webemail">
    password: <input type="password" name= " passwd"  placeholder="enter password ">
    <input type="submit"name="submit" value="submit" />
