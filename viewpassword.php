@@ -3,7 +3,17 @@
 <?php
 session_start();
 include 'connection.php';
-
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Table</title>
+    <link rel="stylesheet" href="viewpassword.css">
+</head>
+<body>
+<?php
 // Check if user is not logged in, redirect to login page
 if (!isset($_SESSION['email'])) {
     header('Location: login.php');
@@ -29,10 +39,10 @@ if ($stmt) {
 
     // Check if there are any rows
     if (mysqli_num_rows($result) > 0) {
-        // Display table header
         echo '<table border="1">
                 <tr>
                     <th>Title</th>
+                    <th>Website</th>
                     <th>Web Email</th>
                     <th>Password</th>
                     <th class="edit-delete">Edit</th>
@@ -44,6 +54,7 @@ if ($stmt) {
             // Display row data in table rows
             echo '<tr>';
             echo '<td>' .$row['title'] . '</td>';
+            echo '<td>' .$row['website'] . '</td>';
             echo '<td>' .$row['webemail'] . '</td>';
             $encryptionKey = "qwertyuiop123456";
 $passwd = openssl_decrypt($row["passwd"], "aes-256-cbc", $encryptionKey, 0, $encryptionKey);
@@ -68,3 +79,5 @@ echo "<td class='edit-delete'><a href='editpassword.php?id=" . $row["id"] . "'>E
 // Close connection
 mysqli_close($conn);
 ?>
+</body>
+</html>
