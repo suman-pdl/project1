@@ -13,6 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id'])) {
     // Retrieve form data
     $id = $_POST['id'];
     $title = $_POST['title'];
+    $website = $_POST['website'];
     $webemail = $_POST['webemail'];
     $passwd = $_POST['passwd'];
 
@@ -21,12 +22,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id'])) {
     $encryptedPasswd = openssl_encrypt($passwd, "aes-256-cbc", $encryptionKey, 0, $encryptionKey);
 
     // Update record in the database
-    $sql = "UPDATE userpassword SET title=?, webemail=?, passwd=? WHERE id=?";
+    $sql = "UPDATE userpassword SET title=?,website=?, webemail=?, passwd=? WHERE id=?";
     $stmt = mysqli_prepare($conn, $sql);
 
     if ($stmt) {
         // Bind parameters to the statement
-        mysqli_stmt_bind_param($stmt, "sssi", $title, $webemail, $encryptedPasswd, $id);
+        mysqli_stmt_bind_param($stmt, "ssssi", $title,$website, $webemail, $encryptedPasswd, $id);
 
         // Execute the statement
         $result = mysqli_stmt_execute($stmt);
@@ -69,6 +70,7 @@ if (isset($_GET['id'])) {
             // Fetch record data
             $row = mysqli_fetch_assoc($result);
             $title = $row['title'];
+            $website = $row['website'];
             $webemail = $row['webemail'];
             // Decrypt the password
             $encryptionKey = "qwertyuiop123456";
@@ -88,6 +90,8 @@ if (isset($_GET['id'])) {
         <input type="hidden" name="id" value="<?php echo $id; ?>">
         <label>Title:</label><br>
         <input type="text" name="title" value="<?php echo $title; ?>" required><br>
+        <label>Website:</label><br>
+        <input type="text" name="website" value="<?php echo $website; ?>" required><br>
         <label>Web Email:</label><br>
         <input type="text" name="webemail" value="<?php echo $webemail; ?>" required><br>
         <label>Password:</label><br>
