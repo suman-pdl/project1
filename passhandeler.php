@@ -10,10 +10,13 @@ if (!isset($_SESSION['email'])) {
 
 if (isset($_POST['submit'])) {
     $title = $_POST['title'];
+    $website = $_POST['website'];
     $webemail = $_POST['webemail'];
     $email  = $_SESSION['email'];
     $passwd = $_POST['passwd'];
-    $sql="INSERT INTO `userpassword`(`useremail`, `title`, `webemail`, `passwd`) VALUES ('$email','$title','$webemail','$passwd')";
+    $encryptionKey = "qwertyuiop123456"; 
+$encryptedPasswd = openssl_encrypt($passwd, "aes-256-cbc", $encryptionKey, 0, $encryptionKey);
+   $sql="INSERT INTO `userpassword`(`useremail`, `title`, `webemail`, `passwd`, `website`) VALUES ('$email','$title','$webemail','$encryptedPasswd','$website')";
     $result=mysqli_query($conn,$sql);
     if ($result) {
     echo("password addded`");}
