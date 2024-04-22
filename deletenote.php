@@ -2,30 +2,53 @@
 session_start();
 include 'connection.php';
 
-// Check if user is logged in
+// Check if user is not logged in, redirect to login page
 if (!isset($_SESSION['email'])) {
-    header('Location: login.php'); // Redirect to login page if not logged in
+    header('Location: login.php');
     exit();
 }
 
-// Check if 'id' parameter is set in the URL
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
+// Check if title parameter is provided via GET request
+if (isset($_GET['title'])) {
+    // Retrieve user's email from session
+    $email = $_SESSION['email'];
+    
+    // Retrieve and sanitize title parameter from GET request
+    $title = $_GET['title'];
 
-    // Prepare DELETE statement to remove the note with the specified ID
-    $sql = "DELETE FROM notes WHERE id = $id AND email = '{$_SESSION['email']}'";
+    // Delete notes record from database based on email and title
+    $sql = "DELETE FROM notes WHERE email = ? AND title = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    if ($stmt) {
+        // Bind parameters to the statement
+        mysqli_stmt_bind_param($stmt, "ss", $email, $title);
 
-    // Execute DELETE query
-    if (mysqli_query($conn, $sql)) {
-        echo "Note deleted successfully";
+        // Execute the statement
+        if (mysqli_stmt_execute($stmt)) {
+            // Check if any rows were affected
+            if (mysqli_stmt_affected_rows($stmt) > 0) {
+                echo "Note deleted successfully";
+                // Redirect to a confirmation page or notes list
+                header('Location: viewnote.php');
+                exit();
+            } else {
+                echo "No note deleted. Record not found or you do not have permission.";
+            }
+        } else {
+            echo "Error deleting note: " . mysqli_stmt_error($stmt);
+            // Log detailed error for debugging
+            // Example: error_log(mysqli_stmt_error($stmt));
+        }
+
+        // Close statement
+        mysqli_stmt_close($stmt);
     } else {
-        echo "Error deleting note: " . mysqli_error($conn);
+        echo "Error in preparing delete statement.";
     }
 } else {
-    echo "Invalid request"; // Handle if 'id' parameter is missing
+    echo "Invalid request. Note title not provided.";
 }
 
-// Redirect back to note.php after deletion
-header("Location: viewnote.php");
-exit;
+// Close connection
+mysqli_close($conn);
 ?>
